@@ -1,0 +1,30 @@
+{
+  "case_id": "L3B_CASE_034",
+  "opened_at": "2018-07-07T09:00:00-03:00",
+  "customer_request": {
+    "language": "vi",
+    "message": "Có thể tồn tại claim mâu thuẫn hoặc candidate sai. Hãy loại trừ candidate và liên kết từng kết luận với evidence.",
+    "claimed_order_id": "dd6ee4d96f0f3cf1432c3b82818e0387",
+    "claims": [
+      {
+        "claim_id": "claim-034-a",
+        "topic": "duplicate_charge"
+      },
+      {
+        "claim_id": "claim-034-b",
+        "topic": "requested_full_refund"
+      }
+    ]
+  },
+  "policy_version": "EC_POLICY_V2",
+  "candidate_order_ids": [
+    "dd6ee4d96f0f3cf1432c3b82818e0387",
+    "candidate-034"
+  ],
+  "investigation_scope": {
+    "include_customer_history": true,
+    "include_product_context": true,
+    "require_independent_verification": true
+  },
+  "customer_unique_id_hint": "customer-3b82818e0387"
+}

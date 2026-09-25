@@ -1,0 +1,30 @@
+{
+  "case_id": "L3B_CASE_041",
+  "opened_at": "2018-05-14T09:00:00-03:00",
+  "customer_request": {
+    "language": "vi",
+    "message": "Điều tra đa nguồn: resolve đúng order, kiểm tra customer history, shipment, payment và policy trước khi kết luận.",
+    "claimed_order_id": "3a119f52de09d1b2700815732def8b47",
+    "claims": [
+      {
+        "claim_id": "claim-041-a",
+        "topic": "late_delivery_logistics"
+      },
+      {
+        "claim_id": "claim-041-b",
+        "topic": "requested_full_refund"
+      }
+    ]
+  },
+  "policy_version": "EC_POLICY_V2",
+  "candidate_order_ids": [
+    "3a119f52de09d1b2700815732def8b47",
+    "candidate-041"
+  ],
+  "investigation_scope": {
+    "include_customer_history": true,
+    "include_product_context": true,
+    "require_independent_verification": true
+  },
+  "customer_unique_id_hint": "customer-15732def8b47"
+}

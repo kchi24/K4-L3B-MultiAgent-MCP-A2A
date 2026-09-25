@@ -1,0 +1,30 @@
+{
+  "case_id": "L3B_CASE_070",
+  "opened_at": "2018-07-16T09:00:00-03:00",
+  "customer_request": {
+    "language": "vi",
+    "message": "Có thể tồn tại claim mâu thuẫn hoặc candidate sai. Hãy loại trừ candidate và liên kết từng kết luận với evidence.",
+    "claimed_order_id": "72fa449394ed9dc9093819f93ca563af",
+    "claims": [
+      {
+        "claim_id": "claim-070-a",
+        "topic": "late_delivery_seller"
+      },
+      {
+        "claim_id": "claim-070-b",
+        "topic": "requested_full_refund"
+      }
+    ]
+  },
+  "policy_version": "EC_POLICY_V2",
+  "candidate_order_ids": [
+    "72fa449394ed9dc9093819f93ca563af",
+    "candidate-070"
+  ],
+  "investigation_scope": {
+    "include_customer_history": true,
+    "include_product_context": true,
+    "require_independent_verification": true
+  },
+  "customer_unique_id_hint": "customer-19f93ca563af"
+}

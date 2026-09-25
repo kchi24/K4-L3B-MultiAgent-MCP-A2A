@@ -1,0 +1,30 @@
+{
+  "case_id": "L3B_CASE_099",
+  "opened_at": "2018-09-18T09:00:00-03:00",
+  "customer_request": {
+    "language": "vi",
+    "message": "Đối soát end-to-end, xử lý nguồn mâu thuẫn và chỉ đề xuất refund khi timeline authoritative hỗ trợ.",
+    "claimed_order_id": "eb09635680fadffb33358e40b05c9029",
+    "claims": [
+      {
+        "claim_id": "claim-099-a",
+        "topic": "unavailable_order_paid"
+      },
+      {
+        "claim_id": "claim-099-b",
+        "topic": "requested_full_refund"
+      }
+    ]
+  },
+  "policy_version": "EC_POLICY_V2",
+  "candidate_order_ids": [
+    "eb09635680fadffb33358e40b05c9029",
+    "candidate-099"
+  ],
+  "investigation_scope": {
+    "include_customer_history": true,
+    "include_product_context": true,
+    "require_independent_verification": true
+  },
+  "customer_unique_id_hint": "customer-8e40b05c9029"
+}
