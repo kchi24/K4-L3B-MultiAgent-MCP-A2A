@@ -5,8 +5,13 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Any
 
+# pyrefly: ignore [missing-import]
 import httpx2
+
+# pyrefly: ignore [missing-import]
 from mcp import ClientSession
+
+# pyrefly: ignore [missing-import]
 from mcp.client.streamable_http import streamable_http_client
 
 from .contracts import Contracts
@@ -24,7 +29,8 @@ class EvidenceGateway:
     async def call(self, tool_name: str, *, case_id: str, **arguments: str) -> dict[str, Any]:
         payload = {"case_id": case_id, **arguments}
         result = await self._session.call_tool(tool_name, arguments=payload)
-        if result.isError:
+        is_err = getattr(result, "is_error", getattr(result, "isError", False))
+        if is_err:
             message = " ".join(
                 block.text for block in result.content if getattr(block, "text", None)
             )

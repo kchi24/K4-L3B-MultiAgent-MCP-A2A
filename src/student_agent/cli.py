@@ -40,24 +40,51 @@ async def _run(root: Path) -> None:
     trace_path.unlink(missing_ok=True)
     trace = TraceWriter(trace_path, contracts)
 
-    async with connect_gateway(settings.mcp_endpoint, settings.team_api_key, contracts) as gateway:
-        discovered_tools = await gateway.list_tools()
-        if not discovered_tools:
-            raise RuntimeError("MCP Gateway returned no tools")
-        for case_id in case_set.case_ids:
-            case = case_set.cases[case_id]
-            trace.emit(case_id=case_id, event_type="case_received", actor="coordinator")
-            output = await solve_case(case, gateway, trace)
-            contracts.validate_output(output, f"outputs/{case_id}.json")
-            if output.get("case_id") != case_id:
-                raise ValueError(f"solver returned a mismatched case_id for {case_id}")
-            target = output_root / f"{case_id}.json"
-            temporary = target.with_suffix(".json.tmp")
-            temporary.write_text(
-                json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    remaining_cases = list(case_set.case_ids)
+    max_retries = 15
+    retry_delay = 2.0
+
+    while remaining_cases:
+        try:
+            async with connect_gateway(
+                settings.mcp_endpoint, settings.team_api_key, contracts
+            ) as gateway:
+                discovered_tools = await gateway.list_tools()
+                if not discovered_tools:
+                    raise RuntimeError("MCP Gateway returned no tools")
+                while remaining_cases:
+                    case_id = remaining_cases[0]
+                    case = case_set.cases[case_id]
+                    trace.emit(case_id=case_id, event_type="case_received", actor="coordinator")
+                    output = await solve_case(case, gateway, trace)
+                    contracts.validate_output(output, f"outputs/{case_id}.json")
+                    if output.get("case_id") != case_id:
+                        raise ValueError(f"solver returned a mismatched case_id for {case_id}")
+                    target = output_root / f"{case_id}.json"
+                    temporary = target.with_suffix(".json.tmp")
+                    temporary.write_text(
+                        json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+                    )
+                    temporary.replace(target)
+                    trace.emit(case_id=case_id, event_type="case_finalized", actor="coordinator")
+                    remaining_cases.pop(0)
+                    done_count = len(case_set.case_ids) - len(remaining_cases)
+                    print(
+                        f"[{done_count}/{len(case_set.case_ids)}] Completed {case_id}", flush=True
+                    )
+        except Exception as e:
+            if not remaining_cases:
+                break
+            max_retries -= 1
+            if max_retries < 0:
+                print(f"Exceeded max retries: {e}", file=sys.stderr, flush=True)
+                raise
+            msg = (
+                f"Connection dropped ({type(e).__name__}: {e}), "
+                f"reconnecting in {retry_delay}s... ({len(remaining_cases)} cases remaining)"
             )
-            temporary.replace(target)
-            trace.emit(case_id=case_id, event_type="case_finalized", actor="coordinator")
+            print(msg, file=sys.stderr, flush=True)
+            await asyncio.sleep(retry_delay)
 
 
 def parser() -> argparse.ArgumentParser:
@@ -80,8 +107,7 @@ def main() -> None:
         if args.command == "validate-inputs":
             case_set = load_case_set(root)
             print(
-                f"OK: {case_set.variant_id} / {case_set.version} / "
-                f"{len(case_set.case_ids)} cases"
+                f"OK: {case_set.variant_id} / {case_set.version} / {len(case_set.case_ids)} cases"
             )
         elif args.command == "mcp-tools":
             asyncio.run(_show_tools(root))
